@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any, Type
 
-from dbt_score import Model, Rule, RuleViolation, Severity, rule
+from dbt_score import Model, Source, Rule, RuleViolation, Severity, rule
 from dbt_score.config import Config
 from dbt_score.model_filter import ModelFilter, model_filter
 from dbt_score.models import ManifestLoader
@@ -129,6 +129,19 @@ def class_rule() -> Type[Rule]:
                 return RuleViolation(message="Model1 is a violation.")
 
     return ExampleRule
+
+
+@fixture
+def decorator_rule_source() -> Type[Rule]:
+    """An example rule created with the rule decorator."""
+
+    @rule()
+    def example_rule(source: Source) -> RuleViolation | None:
+        """Description of the rule."""
+        if source.name == "model1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule
 
 
 # Rules
