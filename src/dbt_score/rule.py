@@ -6,11 +6,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Iterable, Type, TypeAlias, overload
 
-from dbt_score.model_filter import ModelFilter
-from dbt_score.models import Evaluable, Model, Source
 from more_itertools import first_true
-from more_itertools.more import first
 
+from dbt_score.model_filter import ModelFilter
+from dbt_score.models import Evaluable
 
 
 class Severity(Enum):
@@ -84,7 +83,10 @@ class Rule:
 
         evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
         spec = inspect.signature(evaluate_func).parameters
-        resource_type_argument = first_true(spec.values(), pred=lambda arg: arg.annotation is Model or arg.annotation is Source or arg.annotation is Evaluable) # something about this is an anti-pattern
+        resource_type_argument = first_true(spec.values(), pred=lambda arg: arg.annotation in typing.get_args(Evaluable))
+        if not resource_type_argument:
+            raise TypeError("Subclass must implement method `evaluate` with an annotated Model or Source argument.")
+
         cls._resource_type = resource_type_argument.annotation
 
 

@@ -56,13 +56,8 @@ def test_missing_description_rule_class():
 
 def test_missing_evaluate_rule_class(model1):
     """Test missing evaluate implementation in rule class."""
+    with pytest.raises(TypeError):
+        class BadRule(Rule):
+            """Bad example rule."""
 
-    class BadRule(Rule):
-        """Bad example rule."""
-
-        description = "Description of the rule."
-
-    rule = BadRule()
-
-    with pytest.raises(NotImplementedError):
-        rule.evaluate(model1)
+            description = "Description of the rule."

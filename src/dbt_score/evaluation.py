@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Type
 from itertools import chain
+from typing import Type
 
 from dbt_score.formatters import Formatter
-from dbt_score.models import Evaluable, ManifestLoader, Model
+from dbt_score.models import Evaluable, ManifestLoader
 from dbt_score.rule import Rule, RuleViolation
 from dbt_score.rule_registry import RuleRegistry
 from dbt_score.scoring import Score, Scorer
