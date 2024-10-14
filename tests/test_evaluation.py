@@ -235,3 +235,32 @@ def test_evaluation_with_class_filter(
 
     assert class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][class_rule_with_filter], RuleViolation)
+
+def test_evaluation_with_models_and_sources(manifest_path, default_config, decorator_rule, decorator_rule_source):
+    manifest_loader = ManifestLoader(manifest_path)
+    mock_formatter = Mock()
+    mock_scorer = Mock()
+
+    rule_registry = RuleRegistry(default_config)
+    rule_registry._add_rule(decorator_rule)
+    rule_registry._add_rule(decorator_rule_source)
+
+    # Ensure we get a valid Score object from the Mock
+    mock_scorer.score_model.return_value = Score(10, "🥇")
+
+    evaluation = Evaluation(
+        rule_registry=rule_registry,
+        manifest_loader=manifest_loader,
+        formatter=mock_formatter,
+        scorer=mock_scorer,
+    )
+    evaluation.evaluate()
+
+    model1 = manifest_loader.models[0]
+    source1 = manifest_loader.sources[0]
+
+    assert decorator_rule in evaluation.results[model1]
+    assert decorator_rule_source not in evaluation.results[model1]
+
+    assert decorator_rule_source in evaluation.results[source1]
+    assert decorator_rule not in evaluation.results[source1]

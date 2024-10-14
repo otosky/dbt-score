@@ -72,6 +72,19 @@ def model2(raw_manifest) -> Model:
     """Model 2."""
     return Model.from_node(raw_manifest["nodes"]["model.package.model2"], [])
 
+# Sources
+
+
+@fixture
+def source1(raw_manifest) -> Model:
+    """Source 1."""
+    return Source.from_node(raw_manifest["sources"]["source.package.my_source.table1"], [])
+
+
+@fixture
+def source2(raw_manifest) -> Model:
+    """Source 2."""
+    return Source.from_node(raw_manifest["sources"]["source.package.my_source.table2"], [])
 
 # Multiple ways to create rules
 
@@ -136,12 +149,12 @@ def decorator_rule_source() -> Type[Rule]:
     """An example rule created with the rule decorator."""
 
     @rule()
-    def example_rule(source: Source) -> RuleViolation | None:
+    def example_rule_source(source: Source) -> RuleViolation | None:
         """Description of the rule."""
-        if source.name == "model1":
+        if source.name == "table1":
             return RuleViolation(message="Source1 is a violation.")
 
-    return example_rule
+    return example_rule_source
 
 
 # Rules

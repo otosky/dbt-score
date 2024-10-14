@@ -1,6 +1,7 @@
 """Test rule."""
 
 import pytest
+from dbt.cli.params import source
 from dbt_score import Model, Rule, RuleViolation, Severity, rule
 
 
