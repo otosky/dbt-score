@@ -3,8 +3,6 @@
 import pytest
 from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
 
-from tests.conftest import decorator_rule_source
-
 
 def test_rule_decorator_and_class(
     decorator_rule,
@@ -80,5 +78,6 @@ def test_missing_evaluate_rule_class(model1):
     ],
 )
 def test_rule_introspects_its_resource_type(request, rule_fixture, expected_type):
+    """Test that each rule is aware of the resource-type that it can be evaluated against."""
     rule = request.getfixturevalue(rule_fixture)
     assert rule().resource_type is expected_type

@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, TypeAlias
+from typing import Any, Iterable, Literal, TypeAlias
 
 from dbt_score.dbt_utils import dbt_ls
 
@@ -118,6 +118,8 @@ class Column:
 
 
 class HasColumnsMixin:
+    """Common methods for resource types that have columns."""
+
     columns: list[Column]
 
     def get_column(self, column_name: str) -> Column | None:
@@ -236,12 +238,31 @@ class Model(HasColumnsMixin):
 
 @dataclass
 class Duration:
+    """Represents a duration used in SourceFreshness.
+
+    This is referred to as `Time` in the dbt JSONSchema.
+
+    Attributes:
+        count: a positive integer
+        period: "minute" | "hour" | "day"
+    """
+
     count: int | None = None
-    period: str | None = None
+    period: Literal["minute", "hour", "day"] | None = None
 
 
 @dataclass
 class SourceFreshness:
+    """Represents a source freshness configuration.
+
+    This is referred to as `FreshnessThreshold` in the dbt JSONSchema.
+
+    Attributes:
+        warn_after: The threshold after which the dbt source freshness check should soft-fail with a warning.
+        error_after: The threshold after which the dbt source freshness check should fail.
+        filter: An optional filter to apply to the input data before running source freshness check.
+    """
+
     warn_after: Duration
     error_after: Duration
     filter: str | None = None
@@ -249,6 +270,32 @@ class SourceFreshness:
 
 @dataclass
 class Source(HasColumnsMixin):
+    """Represents a dbt source table.
+
+    Attributes:
+        unique_id: The id of the source table, e.g. 'source.package.source_name.source_table_name'.
+        name: The alias of the source table.
+        description: The full description of the source table.
+        source_name: The source namespace.
+        source_description: The description for the source namespace.
+        original_file_path: The yml path to the source definition.
+        config: The config of the source definition.
+        meta: Any meta-attributes on the source table.
+        source_meta: Any meta-attribuets on the source namespace.
+        columns: The list of columns for the source table.
+        package_name: The dbt package name for the source table.
+        database: The database name of the source table.
+        schema: The schema name of the source table.
+        identifier: The actual source table name, i.e. not an alias.
+        loader: The tool used to load the source table into the warehouse.
+        freshness: A set of time thresholds after which data may be considered stale.
+        patch_path: The yml path of the source definition.
+        tags: The list of tags attached to the source table.
+        tests: The list of tests attached to the source table.
+        _raw_values: The raw values of the source definition in the manifest.
+        _raw_test_values: The raw test values of the source definition in the manifest.
+    """
+
     unique_id: str
     name: str
     description: str
