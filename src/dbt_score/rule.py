@@ -67,7 +67,7 @@ class Rule:
     model_filter_names: list[str]
     model_filters: frozenset[ModelFilter] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
-    _resource_type: str
+    resource_type: Evaluable
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
         """Initialize the rule."""
@@ -87,7 +87,7 @@ class Rule:
         if not resource_type_argument:
             raise TypeError("Subclass must implement method `evaluate` with an annotated Model or Source argument.")
 
-        cls._resource_type = resource_type_argument.annotation
+        cls.resource_type = resource_type_argument.annotation
 
 
     def process_config(self, rule_config: RuleConfig) -> None:
