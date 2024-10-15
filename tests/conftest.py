@@ -72,19 +72,25 @@ def model2(raw_manifest) -> Model:
     """Model 2."""
     return Model.from_node(raw_manifest["nodes"]["model.package.model2"], [])
 
+
 # Sources
 
 
 @fixture
 def source1(raw_manifest) -> Model:
     """Source 1."""
-    return Source.from_node(raw_manifest["sources"]["source.package.my_source.table1"], [])
+    return Source.from_node(
+        raw_manifest["sources"]["source.package.my_source.table1"], []
+    )
 
 
 @fixture
 def source2(raw_manifest) -> Model:
     """Source 2."""
-    return Source.from_node(raw_manifest["sources"]["source.package.my_source.table2"], [])
+    return Source.from_node(
+        raw_manifest["sources"]["source.package.my_source.table2"], []
+    )
+
 
 # Multiple ways to create rules
 

@@ -59,7 +59,9 @@ class Evaluation:
             self.results[model] = {}
             for rule in rules:
                 try:
-                    if rule.resource_type is type(model) and rule.should_evaluate(model):  #  Consider model filter(s).
+                    if rule.resource_type is type(model) and rule.should_evaluate(
+                        model
+                    ):  #  Consider model filter(s).
                         result = rule.evaluate(model, **rule.config)
                         self.results[model][rule.__class__] = result
                 except Exception as e:

@@ -236,7 +236,10 @@ def test_evaluation_with_class_filter(
     assert class_rule_with_filter not in evaluation.results[model1]
     assert isinstance(evaluation.results[model2][class_rule_with_filter], RuleViolation)
 
-def test_evaluation_with_models_and_sources(manifest_path, default_config, decorator_rule, decorator_rule_source):
+
+def test_evaluation_with_models_and_sources(
+    manifest_path, default_config, decorator_rule, decorator_rule_source
+):
     manifest_loader = ManifestLoader(manifest_path)
     mock_formatter = Mock()
     mock_scorer = Mock()
