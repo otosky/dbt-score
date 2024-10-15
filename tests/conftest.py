@@ -163,6 +163,48 @@ def decorator_rule_source() -> Type[Rule]:
     return example_rule_source
 
 
+@fixture
+def decorator_rule_no_parens_source() -> Type[Rule]:
+    """An example rule created with the rule decorator without parentheses."""
+
+    @rule
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        """Description of the rule."""
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def decorator_rule_args_source() -> Type[Rule]:
+    """An example rule created with the rule decorator with arguments."""
+
+    @rule(description="Description of the rule.")
+    def example_rule_source(source: Source) -> RuleViolation | None:
+        if source.name == "table1":
+            return RuleViolation(message="Source1 is a violation.")
+
+    return example_rule_source
+
+
+@fixture
+def class_rule_source() -> Type[Rule]:
+    """An example rule created with a class."""
+
+    class ExampleRuleSource(Rule):
+        """Example rule."""
+
+        description = "Description of the rule."
+
+        def evaluate(self, source: Source) -> RuleViolation | None:
+            """Evaluate source."""
+            if source.name == "table1":
+                return RuleViolation(message="Source1 is a violation.")
+
+    return ExampleRuleSource
+
+
 # Rules
 
 

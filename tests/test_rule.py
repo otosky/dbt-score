@@ -3,6 +3,8 @@
 import pytest
 from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
 
+from tests.conftest import decorator_rule_source
+
 
 def test_rule_decorator_and_class(
     decorator_rule,
@@ -64,6 +66,19 @@ def test_missing_evaluate_rule_class(model1):
             description = "Description of the rule."
 
 
-def test_rule_introspects_its_resource_type(decorator_rule, decorator_rule_source):
-    assert decorator_rule().resource_type is Model
-    assert decorator_rule_source().resource_type is Source
+@pytest.mark.parametrize(
+    "rule_fixture,expected_type",
+    [
+        ("decorator_rule", Model),
+        ("decorator_rule_no_parens", Model),
+        ("decorator_rule_args", Model),
+        ("class_rule", Model),
+        ("decorator_rule_source", Source),
+        ("decorator_rule_no_parens_source", Source),
+        ("decorator_rule_args_source", Source),
+        ("class_rule_source", Source),
+    ],
+)
+def test_rule_introspects_its_resource_type(request, rule_fixture, expected_type):
+    rule = request.getfixturevalue(rule_fixture)
+    assert rule().resource_type is expected_type
