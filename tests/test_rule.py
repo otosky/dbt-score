@@ -1,8 +1,7 @@
 """Test rule."""
 
 import pytest
-from dbt.cli.params import source
-from dbt_score import Model, Rule, RuleViolation, Severity, rule
+from dbt_score import Model, Rule, RuleViolation, Severity, Source, rule
 
 
 def test_rule_decorator_and_class(
@@ -58,7 +57,13 @@ def test_missing_description_rule_class():
 def test_missing_evaluate_rule_class(model1):
     """Test missing evaluate implementation in rule class."""
     with pytest.raises(TypeError):
+
         class BadRule(Rule):
             """Bad example rule."""
 
             description = "Description of the rule."
+
+
+def test_rule_introspects_its_resource_type(decorator_rule, decorator_rule_source):
+    assert decorator_rule().resource_type is Model
+    assert decorator_rule_source().resource_type is Source

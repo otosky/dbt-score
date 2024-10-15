@@ -67,7 +67,7 @@ class Rule:
     model_filter_names: list[str]
     model_filters: frozenset[ModelFilter] = frozenset()
     default_config: typing.ClassVar[dict[str, Any]] = {}
-    resource_type: Evaluable
+    resource_type: typing.ClassVar[Evaluable]
 
     def __init__(self, rule_config: RuleConfig | None = None) -> None:
         """Initialize the rule."""
@@ -81,14 +81,24 @@ class Rule:
         if not hasattr(cls, "description"):
             raise AttributeError("Subclass must define class attribute `description`.")
 
+        cls.resource_type = cls._introspect_resource_type()
+
+    @classmethod
+    def _introspect_resource_type(cls) -> Type[Evaluable]:
         evaluate_func = getattr(cls, "_orig_evaluate", cls.evaluate)
-        spec = inspect.signature(evaluate_func).parameters
-        resource_type_argument = first_true(spec.values(), pred=lambda arg: arg.annotation in typing.get_args(Evaluable))
+
+        sig = inspect.signature(evaluate_func)
+        resource_type_argument = first_true(
+            sig.parameters.values(),
+            pred=lambda arg: arg.annotation in typing.get_args(Evaluable),
+        )
+
         if not resource_type_argument:
-            raise TypeError("Subclass must implement method `evaluate` with an annotated Model or Source argument.")
+            raise TypeError(
+                "Subclass must implement method `evaluate` with an annotated Model or Source argument."
+            )
 
-        cls.resource_type = resource_type_argument.annotation
-
+        return resource_type_argument.annotation
 
     def process_config(self, rule_config: RuleConfig) -> None:
         """Process the rule config."""
@@ -145,7 +155,8 @@ class Rule:
 
 
 @overload
-def rule(__func: RuleEvaluationType) -> Type[Rule]: ...
+def rule(__func: RuleEvaluationType) -> Type[Rule]:
+    ...
 
 
 @overload
@@ -154,7 +165,8 @@ def rule(
     description: str | None = None,
     severity: Severity = Severity.MEDIUM,
     model_filters: set[ModelFilter] | None = None,
-) -> Callable[[RuleEvaluationType], Type[Rule]]: ...
+) -> Callable[[RuleEvaluationType], Type[Rule]]:
+    ...
 
 
 def rule(
