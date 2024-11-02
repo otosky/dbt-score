@@ -1,7 +1,13 @@
 """Vendored utility functions from https://github.com/more-itertools/more-itertools."""
+from typing import Iterable
+
+from typing import TypeVar, Callable, Optional
+
+T = TypeVar("T")
+U = TypeVar("U")
 
 
-def first_true(iterable, default=None, pred=None):
+def first_true(iterable: Iterable[T], default: Optional[U] =None, pred: Optional[Callable[[T], bool]]=None) -> T | Optional[U]:
     """Returns the first true value in the iterable.
 
     If no true value is found, returns *default*

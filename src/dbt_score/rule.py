@@ -111,7 +111,9 @@ class Rule:
                 "annotated Model or Source argument."
             )
 
-        return resource_type_argument.annotation
+        resource_type = typing.cast(Type[Evaluable], resource_type_argument.annotation)
+
+        return resource_type
 
     def process_config(self, rule_config: RuleConfig) -> None:
         """Process the rule config."""

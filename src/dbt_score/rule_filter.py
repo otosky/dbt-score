@@ -4,7 +4,7 @@ import inspect
 import typing
 from typing import Any, Callable, Type, TypeAlias, overload
 
-from dbt_score.models import Evaluable
+from dbt_score.models import Evaluable, Model, Source
 from dbt_score.more_itertools import first_true
 
 FilterEvaluationType: TypeAlias = Callable[[Evaluable], bool]
@@ -14,7 +14,7 @@ class RuleFilter:
     """The Filter base class."""
 
     description: str
-    resource_type: typing.ClassVar[Evaluable]
+    resource_type: typing.ClassVar[Type[Evaluable]]
 
     def __init__(self) -> None:
         """Initialize the filter."""
@@ -43,8 +43,9 @@ class RuleFilter:
                 "Subclass must implement method `evaluate` with an "
                 "annotated Model or Source argument."
             )
+        resource_type = typing.cast(Type[Evaluable], resource_type_argument.annotation)
 
-        return resource_type_argument.annotation
+        return resource_type
 
     def evaluate(self, evaluable: Evaluable) -> bool:
         """Evaluates the filter."""
